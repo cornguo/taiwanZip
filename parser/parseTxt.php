@@ -7,8 +7,8 @@ if (2 !== $argc) {
 
 echo "Processing...\n";
 $ret = processData($argv[1]);
-//echo $ret['cnt'] . " rows processed.\n";
-//file_put_contents('parsed.json', json_encode($ret['data']));
+echo $ret['cnt'] . " rows processed.\n";
+file_put_contents('parsed.json', json_encode($ret['data']));
 
 function processData($filename) {
     $fp = fopen($filename, 'rb');
@@ -41,7 +41,7 @@ function processData($filename) {
 
             $numbKey = processNumbKey($rowNorm[$keys[3]]);
             if (!isset($data[$cityKey][$distKey][$numbKey])) {
-                $data[$cityKey][$distKey][$roadKey] = array();
+                $data[$cityKey][$distKey][$roadKey][$numbKey] = array();
             }
 
             $data[$cityKey][$distKey][$roadKey][$numbKey] = $rowNorm[$valKey];
