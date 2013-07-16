@@ -39,7 +39,7 @@ class taiwanZip
     private function _normString($str)
     {
         $patterns = array(
-                        '/(?<numb>[０-９一二三四五六七八九十廿卅百]+)[段號]/u'
+                        '/(?<numb>[０-９一二三四五六七八九十廿卅百]+)[鄰巷段號樓]/u'
                     );
 
         foreach ($patterns as $pattern) {
