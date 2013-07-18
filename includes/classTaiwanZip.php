@@ -13,17 +13,31 @@ class taiwanZip
     {
         // 縣市/鄉鎮市區/路街村里/巷/弄/號/樓
         $str = $this->_normString($str);
+        $data = $this->_getData($this->_data, $str);
 
-        $cityKeys = array_keys($this->_data);
-        $cityKey = $this->_findKey($cityKeys, $str);
+        if ($data !== NULL) {
+            echo "Query string: {$str}\n";
+            echo "Most match: {$data['keyStr']}\n";
+            echo "Data:\n";
+            print_r($data['data']);
+        }
+    }
 
-        $distKeys = array_keys($this->_data[$cityKey]);
-        $distKey = $this->_findKey($distKeys, $str);
-
-        $roadKeys = array_keys($this->_data[$cityKey][$distKey]);
-        $roadKey = $this->_findKey($roadKeys, $str);
-
-        var_dump($this->_data[$cityKey][$distKey][$roadKey]);
+    private function _getData($data, $str, $keyStr = '', $level = 0)
+    {
+        if (3 === $level) {
+            if (strlen($keyStr) > strlen($str)) {
+                return NULL;
+            } else {
+                return array('data' => $data, 'keyStr' => $keyStr);
+            }
+        }
+        $keys = array_keys($data);
+        $key = $this->_findKey($keys, $str, $level);
+        $keyStr .= $key;
+        if (NULL !== $key) {
+            return $this->_getData($data[$key], $str, $keyStr, $level+1);
+        }
     }
 
     private function _findKey($keys, $str)
@@ -33,7 +47,19 @@ class taiwanZip
                 return $key;
             }
         }
-        return NULL;
+
+        // use levenshtein to retrieve posiible keys
+        $str = str_replace('台北縣', '新北市', $str);
+
+        $score = array();
+        foreach ($keys as $key) {
+            $score[$key] = levenshtein($key, $str);
+        }
+
+        asort($score);
+        $keys = array_keys($score);
+
+        return $keys[0];
     }
 
     private function _normString($str)
