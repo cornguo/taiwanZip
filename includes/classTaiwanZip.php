@@ -11,7 +11,6 @@ class taiwanZip
 
     public function addressChunker($str)
     {
-        // 縣市/鄉鎮市區/路街村里/巷/弄/號/樓
         $str = $this->_normString($str);
         $data = $this->_getData($this->_data, $str);
 
@@ -32,24 +31,23 @@ class taiwanZip
                 return array('data' => $data, 'keyStr' => $keyStr);
             }
         }
-        $keys = array_keys($data);
-        $key = $this->_findKey($keys, $str, $level);
-        $keyStr .= $key;
+        $key = $this->_findKey(array_keys($data), $str);
         if (NULL !== $key) {
-            return $this->_getData($data[$key], $str, $keyStr, $level+1);
+            $keyStr .= $key;
+            return $this->_getData($data[$key], $str, $keyStr, $level + 1);
         }
     }
 
     private function _findKey($keys, $str)
     {
         foreach ($keys as $key) {
+            // full match
             if (false !== strstr($str, $key)) {
                 return $key;
             }
         }
 
         // use levenshtein to retrieve posiible keys
-        $str = str_replace('台北縣', '新北市', $str);
 
         $score = array();
         foreach ($keys as $key) {
@@ -57,29 +55,28 @@ class taiwanZip
         }
 
         asort($score);
-        $keys = array_keys($score);
+        $sortedKeys = array_keys($score);
 
-        return $keys[0];
+        return $sortedKeys[0];
     }
 
     private function _normString($str)
     {
-        $patterns = array(
-                        '/(?<numb>[○０-９一二三四五六七八九十廿卅百]+)(?<suffix>[鄰巷段號樓])/u'
-                    );
+        $numbPattern = '/(?<numb>[○０-９一二三四五六七八九十廿卅百]+)(?<suffix>[鄰巷段號樓])/u';
 
-        foreach ($patterns as $pattern) {
-            $match = array();
-            preg_match_all($pattern, $str, $match);
-            if (count($match['numb']) > 0) {
-                $combine = array_combine($match['numb'], $match['suffix']);
-                foreach ($combine as $strFound => $suffix) {
-                    $target = "{$strFound}{$suffix}";
-                    $replace = $this->_translateNumb($strFound) . $suffix;
-                    $str = str_replace($target, $replace, $str);
-                }
+        $match = array();
+        preg_match_all($numbPattern, $str, $match);
+        if (count($match['numb']) > 0) {
+            $combine = array_combine($match['numb'], $match['suffix']);
+            foreach ($combine as $strFound => $suffix) {
+                $target = "{$strFound}{$suffix}";
+                $replace = $this->_translateNumb($strFound) . $suffix;
+                $str = str_replace($target, $replace, $str);
             }
         }
+
+        // convert special name
+        $str = preg_replace('/台?北縣/u', '新北市', $str);
 
         return $str;
     }
