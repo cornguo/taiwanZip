@@ -11,11 +11,12 @@ class taiwanZip
 
     public function addressChunker($str)
     {
-        $str = $this->_normString($str);
-        $data = $this->_getData($this->_data, $str);
+        $normStr = $this->_normString($str);
+        $data = $this->_getData($this->_data, $normStr);
 
         if ($data !== NULL) {
             echo "Query string: {$str}\n";
+            echo "Normalized Query string: {$normStr}\n";
             echo "Most match: {$data['keyStr']}\n";
             echo "Data:\n";
             print_r($data['data']);
