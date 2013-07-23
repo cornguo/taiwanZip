@@ -88,6 +88,7 @@ class taiwanZip
     private function _translateNumb($str)
     {
         $str = str_replace('○', '0', $str);
+        $str = preg_replace('/百$/', '00', $str);
         $str = str_replace('百', '', $str);
 
         $pattern = str_split('０１２３４５６７８９一二三四五六七八九廿卅', 3);
