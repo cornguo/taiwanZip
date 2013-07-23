@@ -4,9 +4,9 @@ class taiwanZip
 {
     private $_data;
 
-    public function __construct()
+    public function __construct($parsedFile = '../parser/parsed.json')
     {
-        $this->_data = json_decode(file_get_contents('../parser/parsed.json'), true);
+        $this->_data = json_decode(file_get_contents($parsedFile), true);
     }
 
     public function addressChunker($str)
