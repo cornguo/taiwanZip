@@ -63,15 +63,18 @@ class taiwanZip
 
     private function _normString($str)
     {
-        $numbPattern = '/(?<numb>[○０-９一二三四五六七八九十廿卅百]+)(?<suffix>[鄰巷段號樓])/u';
+        $numbPattern = '/(?<numb>[○０-９一二三四五六七八九十廿卅百之]+)(?<suffix>[室鄰巷弄段號樓]|$)/u';
 
         $match = array();
         preg_match_all($numbPattern, $str, $match);
-        if (count($match['numb']) > 0) {
-            $combine = array_combine($match['numb'], $match['suffix']);
-            foreach ($combine as $strFound => $suffix) {
-                $target = "{$strFound}{$suffix}";
+        $matchCnt = count($match[0]);
+        if ($matchCnt > 0) {
+            for ($i = 0; $i < $matchCnt; $i++) {
+                $target = $match[0][$i];
+                $strFound = $match['numb'][$i];
+                $suffix = $match['suffix'][$i];
                 $replace = $this->_translateNumb($strFound) . $suffix;
+                $replace = preg_replace('/(\d)之(\d)/u', '$1-$2', $replace);
                 $str = str_replace($target, $replace, $str);
             }
         }
