@@ -15,12 +15,14 @@ class taiwanZip
         $data = $this->_getData($this->_data, $normStr);
 
         if ($data !== NULL) {
-            echo "Query string: {$str}\n";
-            echo "Normalized Query string: {$normStr}\n";
-            echo "Most match: {$data['keyStr']}\n";
-            echo "Data:\n";
-            print_r($data['data']);
+            return array(
+                    'query' => $str,
+                    'norm'  => $normStr,
+                    'match' => $data['keyStr'],
+                    'data'  => $data
+                    );
         }
+        return NULL;
     }
 
     private function _getData($data, $str, $keyStr = '', $level = 0)
