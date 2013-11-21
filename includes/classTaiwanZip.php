@@ -60,7 +60,8 @@ class taiwanZip {
     }
 
     private function _normString($str) {
-        $numbPattern = '/(?<numb>[○０-９一二三四五六七八九十廿卅百之]+)(?<suffix>[室鄰巷弄段號樓]|$)/u';
+    {
+        $numbPattern = '/(?<numb>[○０-９零一二三四五六七八九十廿卅百之]+)(?<suffix>[室鄰巷弄段號樓]|$)/u';
 
         $match = array();
         preg_match_all($numbPattern, $str, $match);
@@ -87,8 +88,8 @@ class taiwanZip {
         $str = preg_replace('/百$/', '00', $str);
         $str = str_replace('百', '', $str);
 
-        $pattern = str_split('０１２３４５６７８９一二三四五六七八九廿卅', 3);
-        $replace = str_split('012345678912345678923', 1);
+        $pattern = str_split('０１２３４５６７８９零一二三四五六七八九廿卅', 3);
+        $replace = str_split('0123456789012345678923', 1);
         $str = str_replace($pattern, $replace, $str);
 
         // handle 十
