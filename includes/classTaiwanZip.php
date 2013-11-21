@@ -60,7 +60,6 @@ class taiwanZip {
     }
 
     private function _normString($str) {
-    {
         $numbPattern = '/(?<numb>[○０-９零一二三四五六七八九十廿卅百之]+)(?<suffix>[室鄰巷弄段號樓]|$)/u';
 
         $match = array();
