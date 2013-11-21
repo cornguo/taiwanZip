@@ -47,10 +47,9 @@ class taiwanZip {
         }
 
         // use levenshtein to retrieve posiible keys
-
         $score = array();
         foreach ($keys as $key) {
-            $score[$key] = levenshtein($key, $str);
+            $score[$key] = levenshtein($key, $str) + levenshtein($key, substr($str, 0, strlen($key)));
         }
 
         asort($score);
@@ -77,6 +76,7 @@ class taiwanZip {
         }
 
         // convert special name
+        $str = str_replace('臺', '台', $str);
         $str = preg_replace('/台?北縣/u', '新北市', $str);
 
         return $str;
