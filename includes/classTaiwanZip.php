@@ -25,7 +25,7 @@ class taiwanZip {
 
     private function _getData($data, $str, $keyStr = '', $level = 0) {
         if (3 === $level) {
-            if (strlen($keyStr) > strlen($str)) {
+            if (levenshtein($keyStr, $str, 0, 1, 1) > 12) {
                 return NULL;
             } else {
                 return array('data' => $data, 'keyStr' => $keyStr);
@@ -49,10 +49,34 @@ class taiwanZip {
         // use levenshtein to retrieve posiible keys
         $score = array();
         foreach ($keys as $key) {
-            $score[$key] = levenshtein($key, $str) + levenshtein($key, substr($str, 0, strlen($key)));
+            $subLen = 0;
+            $keyLen = mb_strlen($key) - 1;
+            // split string from last word of key, i.e. 台北市 => 市, 北, 台
+            for ($i = $keyLen; $i > 0; $i--) {
+                $token = mb_substr($key, $i, 1);
+                $subLen = mb_strpos($str, $token);
+                if (false !== $subLen) {
+                    break;
+                }
+            }
+
+            // if any token found, keep the string from start, i.e. 台北市中正區忠孝東路 => 台北市
+            // else return the string as-is
+            if (false !== $subLen && $subLen > 0) {
+                $testStr = mb_substr($str, 0, $subLen + 1);
+            } else {
+                $testStr = $str;
+            }
+
+            // perform chacter match, get first score
+            $pattern = '/[' . $testStr . ']/Uu';
+            $score[$key] = preg_match_all($pattern, $key);
+
+            // if any modification need, then lower the score
+            $score[$key] -= levenshtein($key, $testStr, 0, 1, 1);
         }
 
-        asort($score);
+        arsort($score);
         $sortedKeys = array_keys($score);
 
         return $sortedKeys[0];
@@ -98,4 +122,5 @@ class taiwanZip {
 
         return $str;
     }
+
 }
