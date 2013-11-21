@@ -1,16 +1,14 @@
 <?php
 
-class taiwanZip
-{
+class taiwanZip {
+
     private $_data;
 
-    public function __construct($parsedFile = '../parser/parsed.json')
-    {
+    public function __construct($parsedFile = '../parser/parsed.json') {
         $this->_data = json_decode(file_get_contents($parsedFile), true);
     }
 
-    public function addressChunker($str)
-    {
+    public function addressChunker($str) {
         $normStr = $this->_normString($str);
         $data = $this->_getData($this->_data, $normStr);
 
@@ -25,8 +23,7 @@ class taiwanZip
         return NULL;
     }
 
-    private function _getData($data, $str, $keyStr = '', $level = 0)
-    {
+    private function _getData($data, $str, $keyStr = '', $level = 0) {
         if (3 === $level) {
             if (strlen($keyStr) > strlen($str)) {
                 return NULL;
@@ -41,8 +38,7 @@ class taiwanZip
         }
     }
 
-    private function _findKey($keys, $str)
-    {
+    private function _findKey($keys, $str) {
         foreach ($keys as $key) {
             // full match
             if (false !== strstr($str, $key)) {
@@ -63,8 +59,7 @@ class taiwanZip
         return $sortedKeys[0];
     }
 
-    private function _normString($str)
-    {
+    private function _normString($str) {
         $numbPattern = '/(?<numb>[○０-９一二三四五六七八九十廿卅百之]+)(?<suffix>[室鄰巷弄段號樓]|$)/u';
 
         $match = array();
@@ -87,8 +82,7 @@ class taiwanZip
         return $str;
     }
 
-    private function _translateNumb($str)
-    {
+    private function _translateNumb($str) {
         $str = str_replace('○', '0', $str);
         $str = preg_replace('/百$/', '00', $str);
         $str = str_replace('百', '', $str);
